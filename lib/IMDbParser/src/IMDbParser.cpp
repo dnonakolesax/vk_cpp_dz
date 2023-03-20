@@ -21,7 +21,7 @@ std::string getNconstByName (std::fstream& nameBasics, std::string name) {
         currString = splitString(inputString, '\t');
         if (currString[1]==name) { 
             std::vector<std::string> roles = splitString(currString[4], ',');
-            if (findInVector(roles, "director"))  return currString[0]; else return empty;
+            if (findInVector(roles, "director")!=-1)  return currString[0]; else return empty;
         }
     }
     return empty;
@@ -43,13 +43,13 @@ std::vector<std::string> getDirectorFilms (std::fstream& titleCrew, std::string 
     while (std::getline(titleCrew, inputString, '\n')) {
         currString = splitString(inputString, '\t');
         std::vector<std::string> directors = splitString(currString[1], ',');
-        if (findInVector(directors, nconst))  result.push_back(currString[0]);
+        if (findInVector(directors, nconst)!=-1)  result.push_back(currString[0]);
     }
     return result;
 }
 
-std::vector<std::string> getNotAdultMovies (std::fstream& titleBasics, std::vector<std::string> nconsts) {
-    std::vector<std::string> result;
+std::vector<Movie> getNotAdultMovies (std::fstream& titleBasics, std::vector<std::string> nconsts) {
+    std::vector<Movie> result;
     std::string inputString;
     std::getline(titleBasics, inputString, '\n');
     std::vector<std::string> currString = splitString(inputString, '\t');
@@ -57,24 +57,29 @@ std::vector<std::string> getNotAdultMovies (std::fstream& titleBasics, std::vect
         std::cerr << "File title.basics.tsv is corrupted: not enough columns" << std::endl;
         exit (-1);
     }
-    if (currString[0]!="tconst" || currString[1]!="titleType" || currString[4]!="isAdult") {
+    if (currString[0]!="tconst" || currString[1]!="titleType" || currString[4]!="isAdult" || currString[3]!="originalTitle") {
         std::cerr << "File title.basics.tsv is corrupted: wrong column contents" << std::endl;
         exit (-1);
     }
     while (std::getline(titleBasics, inputString, '\n')) {
         currString = splitString(inputString, '\t');
-        if (findInVector(nconsts, currString[0])) {
-            if (currString[1]=="movie" && currString[4]!="1") {
-                result.push_back(currString[0]);
+        if (currString[1]=="movie" && currString[4]!="1") {
+            int pos = findInVector(nconsts, currString[0]);
+            if (pos!=-1) {
+                Movie movie;
+                movie.tconst=currString[0];
+                movie.originName = currString[3];
+                result.push_back(movie);
+                nconsts.erase(nconsts.begin()+pos);
+                if(currString[0] == nconsts[nconsts.size()-1]) return result;
             }
-            if(currString[0] == nconsts[nconsts.size()-1]) return result;
         }
     }
     return result;
 }
 
-std::vector<std::string> getRussianMoviesNames (std::fstream& titleAkas, std::vector<std::string> nconsts) {
-    std::vector<std::string> result;
+std::vector<Movie> getRussianMoviesNames (std::fstream& titleAkas, std::vector<Movie> movies) {
+    std::vector<Movie> result;
     std::string inputString;
     std::getline(titleAkas, inputString, '\n');
     std::vector<std::string> currString = splitString(inputString, '\t');
@@ -88,12 +93,16 @@ std::vector<std::string> getRussianMoviesNames (std::fstream& titleAkas, std::ve
     }
     while (std::getline(titleAkas, inputString, '\n')) {
         currString = splitString(inputString, '\t');
-        if (findInVector(nconsts, currString[0])) {
-            if (currString[3]=="RU") {
-                result.push_back(currString[2]);
+        if (currString[3]=="RU") {
+            int pos = findInMovieVector(movies, currString[0]);
+            if (pos!=-1) {
+                movies[pos].originName = currString[2];
+                result.push_back(movies[pos]);
+                movies.erase(movies.begin()+pos);
+                if(currString[0] == movies[movies.size()-1].tconst) {result.insert(result.end(), movies.begin(), movies.end()); return result;}
             }
-            if(currString[0] == nconsts[nconsts.size()-1]) return result;
         }
     }
+    result.insert(result.end(), movies.begin(), movies.end());
     return result;
 }

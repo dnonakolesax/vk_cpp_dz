@@ -47,26 +47,26 @@ int main (int argc, char* argv[]) {
     }
     std::string nconst = getNconstByName(nameBasics, director);
     if (nconst.empty()) {
-        std::cerr << "No such director!" << std::endl;
+        std::cerr << "No such director! " << director << std::endl;
         return (-1);
     }
+    nameBasics.close();
     std::vector<std::string> directorFilms = getDirectorFilms(titleCrew, nconst);
     if (directorFilms.empty()) {
         std::cerr << "This director has no titles!" << std::endl;
         return (-1);
     }
-    std::vector<std::string> notAdultMovies = getNotAdultMovies(titleBasics, directorFilms);
+    titleCrew.close();
+    std::vector<Movie> notAdultMovies = getNotAdultMovies(titleBasics, directorFilms);
     if (notAdultMovies.empty()) {
         std::cerr << "This director has no not-adult movies!" << std::endl;
         return (-1);
     }
-    std::vector<std::string> russianMovies = getRussianMoviesNames(titleAkas, notAdultMovies);
-    if (russianMovies.empty()) {
-        std::cerr << "This director has no localised to Russian movies!" << std::endl;
-        return (-1);
-    }
+    titleBasics.close();
+    std::vector<Movie> russianMovies = getRussianMoviesNames(titleAkas, notAdultMovies); //не делаем проверку на empty, так как гарантированно вернутся хотя бы оригинальные названия фильмов
+    titleAkas.close();
     for (int i = 0; i < russianMovies.size(); i++) {
-        std::cout << russianMovies[i] << std::endl;
+        std::cout << russianMovies[i].originName << std::endl;
     }
     return 0;
 }
