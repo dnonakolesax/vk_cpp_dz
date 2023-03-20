@@ -46,9 +46,25 @@ int main (int argc, char* argv[]) {
         return -1;
     }
     std::string nconst = getNconstByName(nameBasics, director);
+    if (nconst.empty()) {
+        std::cerr << "No such director!" << std::endl;
+        return (-1);
+    }
     std::vector<std::string> directorFilms = getDirectorFilms(titleCrew, nconst);
+    if (directorFilms.empty()) {
+        std::cerr << "This director has no titles!" << std::endl;
+        return (-1);
+    }
     std::vector<std::string> notAdultMovies = getNotAdultMovies(titleBasics, directorFilms);
+    if (notAdultMovies.empty()) {
+        std::cerr << "This director has no not-adult movies!" << std::endl;
+        return (-1);
+    }
     std::vector<std::string> russianMovies = getRussianMoviesNames(titleAkas, notAdultMovies);
+    if (russianMovies.empty()) {
+        std::cerr << "This director has no localised to Russian movies!" << std::endl;
+        return (-1);
+    }
     for (int i = 0; i < russianMovies.size(); i++) {
         std::cout << russianMovies[i] << std::endl;
     }
