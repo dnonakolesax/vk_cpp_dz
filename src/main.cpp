@@ -70,3 +70,4 @@ int main (int argc, char* argv[]) {
     }
     return 0;
 }
+//./build/dz1 "Alfred Hitchcock" --title-akas-path content/title.akas.tsv --title-basics-path content/title.basics.tsv --title-crew-path content/title.crew.tsv --name-basics-path content/name.basics.tsv - на этом тесте работает полторы минуты
