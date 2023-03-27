@@ -1,9 +1,13 @@
-#ifndef IMDBPARSER_HPP
-#define IMDBPARSER_HPP
+#ifndef LIB_IMDBPARSER_INCLUDE_IMDBPARSER_HPP_
+#define LIB_IMDBPARSER_INCLUDE_IMDBPARSER_HPP_
 
 
 #include <vector>
+#include <string>
 #include "utils.hpp"
+
+#define REQUIRED_TITLE_TYPE "movie"
+#define REQUIRED_ISADULT "1"
 
 
 #define TAKAS_TCONST_INDX 0
@@ -36,19 +40,28 @@
 struct movie_t {
     std::string tconst;
     std::string originName;
-    movie_t (std::string _tc, std::string _name) : tconst(_tc), originName (_name) {}; 
+    movie_t(std::string _tc, std::string _name) {
+        tconst = _tc;
+        originName = _name;
+    }
 };
 
 struct crew_member_t {
     std::string nconst;
     std::string name;
-    crew_member_t (std::string _nc, std::string _name) : nconst(_nc), name (_name) {};
+    crew_member_t(std::string _nc, std::string _name) {
+        nconst = _nc;
+        name = _name;
+    }
 };
 
 struct title_directors_t {
     std::string tconst;
     std::vector<std::string> directors;
-    title_directors_t (std::string _tc, std::vector<std::string> _dirs) : tconst(_tc), directors(_dirs) {};
+    title_directors_t(std::string _tc, std::vector<std::string> _dirs) {
+        tconst = _tc;
+        directors = _dirs;
+    }
 };
 
 struct title_data_t {
@@ -56,27 +69,47 @@ struct title_data_t {
     std::string originalName;
     std::string isAdult;
     std::string titleType;
-    title_data_t (std::string _tc, std::string _name, std::string _isAdult, std::string _tt) : tconst(_tc), originalName(_name), isAdult(_isAdult), titleType (_tt) {};
+    title_data_t(std::string _tc, std::string _name,
+                std::string _isAdult, std::string _tt) {
+        tconst = _tc;
+        originalName = _name;
+        isAdult = _isAdult;
+        titleType = _tt;
+    }
 };
 
 struct localised_movie_t {
     std::string tconst;
     std::string localName;
     std::string region;
-    localised_movie_t (std::string _tc, std::string _lname, std::string _reg) : tconst(_tc), localName(_lname), region(_reg) {};
+    localised_movie_t(std::string _tc, std::string _lname, std::string _reg) {
+        tconst = _tc;
+        localName = _lname;
+        region = _reg;
+    }
 };
 
 
-std::string getNconstByName (std::istream& nameBasics, std::string name);
-std::vector<std::string> getDirectorFilms (std::istream& titleCrew, std::string nconst);
-std::vector<movie_t> getNotAdultMovies (std::istream& titleBasics, std::vector<std::string> nconsts);
-std::vector<movie_t> getRussianMoviesNames (std::istream& titleAkas, std::vector<movie_t> nconsts);
+std::string getNconstByName(std::istream& nameBasics,
+                            std::string name);
 
-crew_member_t stringIntoCrewMember (std::string inputString);
-title_directors_t stringIntoTitleDirectors (std::string inputString);
-title_data_t stringIntoTitleData (std::string inputString);
-localised_movie_t stringIntoLocalisedMovie (std::string inputString);
+std::vector<std::string> getDirectorFilms(std::istream& titleCrew,
+                                          std::string nconst);
 
-int findInMovieVector (std::vector<movie_t> input, std::string value);
+std::vector<movie_t> getNotAdultMovies(std::istream& titleBasics,
+                                       std::vector<std::string> nconsts);
 
-#endif
+std::vector<movie_t> getRussianMoviesNames(std::istream& titleAkas,
+                                           std::vector<movie_t> nconsts);
+
+
+crew_member_t stringIntoCrewMember(std::string inputString);
+title_directors_t stringIntoTitleDirectors(std::string inputString);
+title_data_t stringIntoTitleData(std::string inputString);
+localised_movie_t stringIntoLocalisedMovie(std::string inputString);
+
+
+int findInMovieVector(std::vector<movie_t> input, std::string value);
+
+
+#endif  // LIB_IMDBPARSER_INCLUDE_IMDBPARSER_HPP_

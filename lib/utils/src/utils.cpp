@@ -4,7 +4,7 @@
 #include "utils.hpp"
 
 
-std::vector<std::string> splitString (std::string toSplit, char separator) {
+std::vector<std::string> splitString(std::string toSplit, char separator) {
     std::stringstream ss(toSplit);
     std::string temp;
     std::vector<std::string> result;
